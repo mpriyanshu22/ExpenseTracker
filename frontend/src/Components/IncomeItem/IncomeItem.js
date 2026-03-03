@@ -84,18 +84,19 @@ function IncomeItem({
                             {description}
                         </p>
                     </div>
-                    <div className="btn-con">
-                        <Button 
-                            icon={trash}
-                            bPad={'clamp(0.6rem, 2vw, 1rem)'}
-                            bRad={'50%'}
-                            bg={'var(--primary-color)'}
-                            color={'#fff'}
-                            iColor={'#fff'}
-                            hColor={'var(--color-green)'}
-                            onClick={() => deleteItem(id)}
-                        />
-                    </div>
+                   <div className="btn-con">
+    <Button 
+        icon={trash}
+        /* Using clamp for responsive padding */
+        bPad={'clamp(0.6rem, 2vw, 1rem)'} 
+        bRad={'50%'}
+        /* Ensure this variable is defined in GlobalStyle.js as #222260 */
+        bg={'var(--primary-color)'} 
+        /* Explicitly setting the icon color to white */
+        color={'#FF0000'} 
+        onClick={() => deleteItem(id)}
+    />
+</div>
                 </div>
             </div>
         </IncomeItemStyled>

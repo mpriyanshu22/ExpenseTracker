@@ -8,7 +8,7 @@ function Button({name, icon, onClick, bg, bPad, color, bRad}) {
                 background: bg,
                 padding: bPad,
                 borderRadius: bRad,
-                color: color,
+                color: color, // This color prop is key for visibility
             }} 
             onClick={onClick}
         >
@@ -29,22 +29,27 @@ const ButtonStyled = styled.button`
     gap: .5rem;
     cursor: pointer;
     transition: all .4s ease-in-out;
-    white-space: nowrap; /* Prevents text from wrapping to a second line */
+    white-space: nowrap;
     width: fit-content;
 
+    /* Fixed: Added color inherit to make sure icon receives the 'color' prop */
     .icon {
         display: flex;
         align-items: center;
         font-size: 1.2rem;
+        color: inherit; 
+        
+        i {
+            color: inherit;
+        }
     }
 
     &:active {
-        transform: scale(0.95); /* Better feedback for mobile touch */
+        transform: scale(0.95);
     }
 
-    /* Mobile Responsive Adjustments */
     @media screen and (max-width: 600px) {
-        padding: 0.6rem 1rem !important; /* Forces a consistent mobile size if bPad is too large */
+        padding: 0.6rem 1rem !important;
         font-size: 0.9rem;
         gap: 0.4rem;
         
@@ -53,9 +58,9 @@ const ButtonStyled = styled.button`
         }
     }
 
-    /* Extra Small Screen Adjustment */
     @media screen and (max-width: 400px) {
-        width: 100%; /* Makes buttons full-width on very small phones for easier clicking */
+        /* Only apply full width if there is text (name) */
+        width: ${props => props.style.borderRadius === '50%' ? 'fit-content' : '100%'};
     }
 `;
 
