@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const BASE_URL = process.env.REACT_APP_API_URL;
 
-
+// Global default for axios
 axios.defaults.withCredentials = true;
 
 const GlobalContext = React.createContext();
@@ -13,57 +13,84 @@ export const GlobalProvider = ({ children }) => {
   const [expenses, setExpenses] = useState([]);
   const [error, setError] = useState(null);
 
+  // --- INCOME ACTIONS ---
   const addIncome = async (income) => {
-    await axios.post(`${BASE_URL}transactions/add-income`, income).catch((err) => {
+    setError(null);
+    try {
+      await axios.post(`${BASE_URL}transactions/add-income`, income, {
+        withCredentials: true 
+      });
+      await getIncomes();
+    } catch (err) {
       setError(err.response?.data?.message || 'Unable to add income');
-    });
-    getIncomes();
+    }
   };
 
   const getIncomes = async () => {
-    const response = await axios.get(`${BASE_URL}transactions/get-incomes`);
-    setIncomes(response.data);
+    try {
+      const response = await axios.get(`${BASE_URL}transactions/get-incomes`, {
+        withCredentials: true // Required to identify the user
+      });
+      setIncomes(response.data);
+    } catch (err) {
+      setError(err.response?.data?.message || 'Unable to fetch incomes');
+    }
   };
 
   const deleteIncome = async (id) => {
-    await axios.delete(`${BASE_URL}transactions/delete-income/${id}`);
-    getIncomes();
+    try {
+      await axios.delete(`${BASE_URL}transactions/delete-income/${id}`, {
+        withCredentials: true
+      });
+      await getIncomes();
+    } catch (err) {
+      setError(err.response?.data?.message || 'Unable to delete income');
+    }
   };
 
-  const totalIncome = () => {
-    return incomes.reduce((acc, income) => acc + (income.amount || 0), 0);
-  };
-
+  // --- EXPENSE ACTIONS ---
   const addExpense = async (expense) => {
-    await axios.post(`${BASE_URL}transactions/add-expense`, expense).catch((err) => {
+    setError(null);
+    try {
+      await axios.post(`${BASE_URL}transactions/add-expense`, expense, {
+        withCredentials: true,
+      });
+      await getExpenses(); 
+    } catch (err) {
       setError(err.response?.data?.message || 'Unable to add expense');
-    });
-    getExpenses();
+    }
   };
 
   const getExpenses = async () => {
-    const response = await axios.get(`${BASE_URL}transactions/get-expenses`);
-    setExpenses(response.data);
+    try {
+      const response = await axios.get(`${BASE_URL}transactions/get-expenses`, {
+        withCredentials: true // Required to identify the user
+      });
+      setExpenses(response.data);
+    } catch (err) {
+      setError(err.response?.data?.message || 'Unable to fetch expenses');
+    }
   };
 
   const deleteExpense = async (id) => {
-    await axios.delete(`${BASE_URL}transactions/delete-expense/${id}`);
-    getExpenses();
+    try {
+      await axios.delete(`${BASE_URL}transactions/delete-expense/${id}`, {
+        withCredentials: true
+      });
+      await getExpenses();
+    } catch (err) {
+      setError(err.response?.data?.message || 'Unable to delete expense');
+    }
   };
 
-  const totalExpenses = () => {
-    return expenses.reduce((acc, expense) => acc + (expense.amount || 0), 0);
-  };
-
-  const totalBalance = () => {
-    return totalIncome() - totalExpenses();
-  };
+  // --- CALCULATIONS ---
+  const totalIncome = () => incomes.reduce((acc, income) => acc + (income.amount || 0), 0);
+  const totalExpenses = () => expenses.reduce((acc, expense) => acc + (expense.amount || 0), 0);
+  const totalBalance = () => totalIncome() - totalExpenses();
 
   const transactionHistory = (limit = 3) => {
     const history = [...incomes, ...expenses];
-    history.sort((a, b) => {
-      return new Date(b.createdAt) - new Date(a.createdAt);
-    });
+    history.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     return typeof limit === 'number' ? history.slice(0, limit) : history;
   };
 
@@ -91,6 +118,4 @@ export const GlobalProvider = ({ children }) => {
   );
 };
 
-export const useGlobalContext = () => {
-  return useContext(GlobalContext);
-};
+export const useGlobalContext = () => useContext(GlobalContext);
