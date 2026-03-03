@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { dateFormat } from '../../utils/dateFormat';
-import { bitcoin, book, calender, card, circle, clothing, comment, dollar, food, freelance, medical, money, piggy, stocks, takeaway, trash, tv, users, yt } from '../../utils/Icons';
+import { bitcoin, book, calender, card, circle, clothing, comment, rupee, food, freelance, medical, money, piggy, stocks, takeaway, trash, tv, users, yt, briefcase } from '../../utils/Icons';
 import Button from '../Button/Button';
 
 function IncomeItem({
@@ -19,7 +19,7 @@ function IncomeItem({
     const categoryIcon = () =>{
         switch(category) {
             case 'salary':
-                return money;
+                return briefcase || money;
             case 'freelancing':
                 return freelance
             case 'investments':
@@ -42,6 +42,7 @@ function IncomeItem({
     const expenseCatIcon = () => {
         switch (category) {
             case 'education':
+            case 'college fees':
                 return book;
             case 'groceries':
                 return food;
@@ -73,7 +74,9 @@ function IncomeItem({
                 <h5>{title}</h5>
                 <div className="inner-content">
                     <div className="text">
-                        <p>{dollar} {amount}</p>
+                        <p style={{ color: type === 'expense' ? '#FF0000' : '#42AD00' }}>
+                            {rupee} {amount.toLocaleString('en-IN')}
+                        </p>
                         <p>{calender} {dateFormat(date)}</p>
                         <p>
                             {comment}
@@ -99,8 +102,9 @@ function IncomeItem({
 }
 
 const IncomeItemStyled = styled.div`
-    background: #FCF6F9;
-    border: 2px solid #FFFFFF;
+    background: rgba(252, 246, 249, 0.78);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
     box-shadow: 0px 1px 15px rgba(0, 0, 0, 0.06);
     border-radius: 20px;
     padding: 1rem;
@@ -110,15 +114,22 @@ const IncomeItemStyled = styled.div`
     gap: 1rem;
     width: 100%;
     color: #222260;
+    transition: all 0.2s ease;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+    }
     .icon{
         width: 80px;
         height: 80px;
         border-radius: 20px;
-        background: #F5F5F5;
+        background: rgba(252, 246, 249, 0.78);
+        backdrop-filter: blur(10px);
         display: flex;
         align-items: center;
         justify-content: center;
-        border: 2px solid #FFFFFF;
+        border: 1px solid rgba(255, 255, 255, 0.2);
         i{
             font-size: 2.6rem;
         }

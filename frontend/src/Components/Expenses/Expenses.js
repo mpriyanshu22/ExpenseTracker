@@ -2,9 +2,9 @@ import React, { useEffect } from 'react'
 import styled from 'styled-components'
 import { useGlobalContext } from '../../context/globalContext';
 import { InnerLayout } from '../../styles/Layouts';
-import Form from '../Form/Form';
 import IncomeItem from '../IncomeItem/IncomeItem';
 import ExpenseForm from './ExpenseForm';
+import { rupee } from '../../utils/Icons';
 
 function Expenses() {
     const {addIncome,expenses, getExpenses, deleteExpense, totalExpenses} = useGlobalContext()
@@ -16,15 +16,14 @@ function Expenses() {
         <ExpenseStyled>
             <InnerLayout>
                 <h1>Expenses</h1>
-                <h2 className="total-income">Total Expense: <span>${totalExpenses()}</span></h2>
-                <div className="income-content">
+                <h2 className="total-expense">Total Expense: <span>{rupee} {totalExpenses().toLocaleString('en-IN')}</span></h2>
+                <div className="expense-content">
                     <div className="form-container">
                         <ExpenseForm />
                     </div>
-                    <div className="incomes">
-                        {expenses.map((income) => {
-                            const {_id, title, amount, date, category, description, type} = income;
-                            console.log(income)
+                    <div className="expenses">
+                        {expenses.map((expense) => {
+                            const {_id, title, amount, date, category, description, type} = expense;
                             return <IncomeItem
                                 key={_id}
                                 id={_id} 
@@ -34,7 +33,7 @@ function Expenses() {
                                 date={date} 
                                 type={type}
                                 category={category} 
-                                indicatorColor="var(--color-green)"
+                                indicatorColor="#FF0000"
                                 deleteItem={deleteExpense}
                             />
                         })}
@@ -48,28 +47,50 @@ function Expenses() {
 const ExpenseStyled = styled.div`
     display: flex;
     overflow: auto;
-    .total-income{
+    .total-expense{
         display: flex;
         justify-content: center;
         align-items: center;
-        background: #FCF6F9;
-        border: 2px solid #FFFFFF;
+        background: rgba(252, 246, 249, 0.78);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
         box-shadow: 0px 1px 15px rgba(0, 0, 0, 0.06);
         border-radius: 20px;
         padding: 1rem;
         margin: 1rem 0;
         font-size: 2rem;
         gap: .5rem;
+        transition: all 0.2s ease;
+
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
         span{
             font-size: 2.5rem;
             font-weight: 800;
-            color: var(--color-green);
+            color: #FF0000;
         }
     }
-    .income-content{
+    .expense-content{
         display: flex;
         gap: 2rem;
-        .incomes{
+
+        @media (max-width: 1024px) {
+            flex-direction: column;
+        }
+
+        .form-container {
+            width: 100%;
+            max-width: 400px;
+
+            @media (max-width: 1024px) {
+                max-width: 100%;
+            }
+        }
+
+        .expenses{
             flex: 1;
         }
     }

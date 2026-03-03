@@ -50,7 +50,7 @@ function ExpenseForm() {
             </div>
             <div className="input-control">
                 <input value={amount}  
-                    type="text" 
+                    type="number"  
                     name={'amount'} 
                     placeholder={'Expense Amount'}
                     onChange={handleInput('amount')} 
@@ -101,7 +101,7 @@ function ExpenseForm() {
 const ExpenseFormStyled = styled.form`
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 1.5rem;
     input, textarea, select{
         font-family: inherit;
         font-size: inherit;
@@ -109,16 +109,27 @@ const ExpenseFormStyled = styled.form`
         border: none;
         padding: .5rem 1rem;
         border-radius: 5px;
-        border: 2px solid #fff;
-        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: rgba(252, 246, 249, 0.78);
+        backdrop-filter: blur(10px);
         resize: none;
         box-shadow: 0px 1px 15px rgba(0, 0, 0, 0.06);
         color: rgba(34, 34, 96, 0.9);
+        width: 100%;
+        transition: all 0.2s ease;
+        &:hover {
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+        &:focus {
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 2px rgba(245, 102, 146, 0.2);
+        }
         &::placeholder{
             color: rgba(34, 34, 96, 0.4);
         }
     }
     .input-control{
+        width: 100%;
         input{
             width: 100%;
         }
