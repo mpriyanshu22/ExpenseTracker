@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const BASE_URL = 'https://expensetracker-backend-0nrd.onrender.com/api/v1/';
 
-// Configure axios to send credentials (cookies) with all requests
+
 axios.defaults.withCredentials = true;
 
 const GlobalContext = React.createContext();
