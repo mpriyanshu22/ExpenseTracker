@@ -1,38 +1,34 @@
 import React, { useState, useMemo } from 'react'
 import styled from 'styled-components'
 import { useGlobalContext } from '../context/globalContext';
-import { rupee } from '../utils/Icons';
 import IncomeItem from '../Components/IncomeItem/IncomeItem';
 
 function History({ limit, full = false }) {
-    const { transactionHistory, incomes, expenses, deleteIncome, deleteExpense } = useGlobalContext()
+    const { transactionHistory, deleteIncome, deleteExpense } = useGlobalContext()
     const [searchTerm, setSearchTerm] = useState('');
     const [filterCategory, setFilterCategory] = useState('all');
     const [filterType, setFilterType] = useState('all');
 
+    const rupeeSymbol = "₹";
     const history = transactionHistory();
 
     const filteredHistory = useMemo(() => {
         let filtered = [...history];
 
-        // Apply search filter
         if (searchTerm) {
             filtered = filtered.filter(item =>
                 item.title.toLowerCase().includes(searchTerm.toLowerCase())
             );
         }
 
-        // Apply category filter
         if (filterCategory !== 'all') {
             filtered = filtered.filter(item => item.category === filterCategory);
         }
 
-        // Apply type filter
         if (filterType !== 'all') {
             filtered = filtered.filter(item => item.type === filterType);
         }
 
-        // Apply limit if specified
         if (limit) {
             filtered = filtered.slice(0, limit);
         }
@@ -47,7 +43,6 @@ function History({ limit, full = false }) {
     }, [history]);
 
     if (!full) {
-        // Simple recent history view for Dashboard
         return (
             <HistoryStyled>
                 {filteredHistory.length === 0 ? (
@@ -57,15 +52,15 @@ function History({ limit, full = false }) {
                         const { _id, title, amount, type } = item;
                         return (
                             <div key={_id} className="history-item">
-                                <p style={{
+                                <p className="title" style={{
                                     color: type === 'expense' ? '#FF0000' : '#42AD00'
                                 }}>
                                     {title}
                                 </p>
-                                <p style={{
+                                <p className="amount" style={{
                                     color: type === 'expense' ? '#FF0000' : '#42AD00'
                                 }}>
-                                    {type === 'expense' ? `-${rupee} ${amount <= 0 ? 0 : amount.toLocaleString('en-IN')}` : `+${rupee} ${amount <= 0 ? 0 : amount.toLocaleString('en-IN')}`}
+                                    {type === 'expense' ? `- ${rupeeSymbol}${amount <= 0 ? 0 : amount.toLocaleString('en-IN')}` : `+ ${rupeeSymbol}${amount <= 0 ? 0 : amount.toLocaleString('en-IN')}`}
                                 </p>
                             </div>
                         );
@@ -75,7 +70,6 @@ function History({ limit, full = false }) {
         );
     }
 
-    // Full history page with search and filters
     return (
         <HistoryPageStyled>
             <div className="header-section">
@@ -147,43 +141,43 @@ const HistoryStyled = styled.div`
     
     .history-item {
         background: rgba(252, 246, 249, 0.78);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        backdrop-filter: blur(10px);
+        border: 2px solid #FFFFFF;
         box-shadow: 0px 1px 15px rgba(0, 0, 0, 0.06);
         padding: 1rem;
         border-radius: 20px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        transition: all 0.2s ease;
 
-        &:hover {
-            transform: translateX(4px);
-            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+        @media screen and (max-width: 600px) {
+            padding: 0.8rem;
+            border-radius: 15px;
+            p { font-size: 0.9rem !important; }
         }
 
         p {
             font-weight: 600;
-            font-size: 1rem;
+            font-size: 1.1rem;
         }
-    }
 
-    .no-transactions {
-        text-align: center;
-        padding: 2rem;
-        color: rgba(34, 34, 96, 0.5);
+        .amount {
+            white-space: nowrap;
+            margin-left: 10px;
+        }
+
+        .title {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
     }
 `;
 
 const HistoryPageStyled = styled.div`
     .header-section {
         margin-bottom: 2rem;
-
-        h1 {
-            padding-left: 8px;
-            margin-bottom: 1.5rem;
-        }
-
+        h1 { margin-bottom: 1.5rem; }
+        
         .filters {
             display: flex;
             flex-direction: column;
@@ -197,54 +191,26 @@ const HistoryPageStyled = styled.div`
 
         .search-bar {
             flex: 1;
-
             input {
                 width: 100%;
-                padding: 0.75rem 1rem;
-                border-radius: 12px;
-                border: 1px solid rgba(255, 255, 255, 0.2);
+                padding: .7rem 1rem;
+                border-radius: 10px;
+                border: 2px solid #fff;
                 background: rgba(252, 246, 249, 0.78);
-                backdrop-filter: blur(10px);
-                box-shadow: 0px 1px 15px rgba(0, 0, 0, 0.06);
-                color: rgba(34, 34, 96, 0.9);
-                font-family: inherit;
-                font-size: inherit;
                 outline: none;
-                transition: all 0.2s ease;
-
-                &:focus {
-                    border-color: var(--color-accent);
-                    box-shadow: 0 0 0 2px rgba(245, 102, 146, 0.2);
-                }
-
-                &::placeholder {
-                    color: rgba(34, 34, 96, 0.4);
-                }
             }
         }
 
         .filter-controls {
             display: flex;
             gap: 1rem;
-
             select {
-                padding: 0.75rem 1rem;
-                border-radius: 12px;
-                border: 1px solid rgba(255, 255, 255, 0.2);
+                flex: 1;
+                padding: .7rem;
+                border-radius: 10px;
+                border: 2px solid #fff;
                 background: rgba(252, 246, 249, 0.78);
-                backdrop-filter: blur(10px);
-                box-shadow: 0px 1px 15px rgba(0, 0, 0, 0.06);
-                color: rgba(34, 34, 96, 0.9);
-                font-family: inherit;
-                font-size: inherit;
-                outline: none;
                 cursor: pointer;
-                transition: all 0.2s ease;
-
-                &:focus {
-                    border-color: var(--color-accent);
-                    box-shadow: 0 0 0 2px rgba(245, 102, 146, 0.2);
-                }
             }
         }
     }
@@ -253,17 +219,17 @@ const HistoryPageStyled = styled.div`
         display: flex;
         flex-direction: column;
         gap: 1rem;
-    }
+        max-height: 70vh; /* Keeps the list from growing infinitely */
+        overflow-y: auto;
+        padding-right: 5px;
 
-    .no-transactions {
-        text-align: center;
-        padding: 3rem;
-        background: rgba(252, 246, 249, 0.78);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        backdrop-filter: blur(10px);
-        border-radius: 20px;
-        color: rgba(34, 34, 96, 0.5);
+        /* Custom Scrollbar for better UI */
+        &::-webkit-scrollbar { width: 5px; }
+        &::-webkit-scrollbar-thumb {
+            background: rgba(34, 34, 96, 0.2);
+            border-radius: 10px;
+        }
     }
 `;
 
-export default History
+export default History;

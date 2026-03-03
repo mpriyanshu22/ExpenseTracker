@@ -8,7 +8,6 @@ import Dashboard from './Components/Dashboard/Dashboard';
 import Income from './Components/Income/Income';
 import Expenses from './Components/Expenses/Expenses';
 import History from './History/History';
-import { useGlobalContext } from './context/globalContext';
 import { useAuth } from './context/authContext';
 import Login from './Components/Auth/Login';
 import Register from './Components/Auth/Register';
@@ -16,7 +15,6 @@ import Register from './Components/Auth/Register';
 function App() {
   const [active, setActive] = useState(1);
   const [showRegister, setShowRegister] = useState(false);
-  const global = useGlobalContext();
   const { user, token, logout } = useAuth();
 
   const isAuthenticated = !!token;
@@ -58,7 +56,9 @@ function App() {
           onSignOut={logout}
           user={user}
         />
-        <main>{displayData()}</main>
+        <main>
+          {displayData()}
+        </main>
       </MainLayout>
     </AppStyled>
   );
@@ -70,31 +70,43 @@ const AppStyled = styled.div`
   background-size: cover;
   background-position: center;
   position: relative;
-  padding: 1.5rem;
-  display: flex;
-  align-items: stretch;
-  justify-content: center;
   overflow: hidden;
 
-  @media (max-width: 768px) {
-    padding: 1rem;
+  /* Mobile Responsive Adjustments */
+  @media screen and (max-width: 1024px) {
+    height: auto;
+    min-height: 100vh;
+    overflow: auto;
   }
 
   main {
     flex: 1;
     background: rgba(252, 246, 249, 0.78);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 3px solid #FFFFFF;
     backdrop-filter: blur(10px);
     border-radius: 32px;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto; /* Allows the main content area to scroll independently on desktop */
     box-shadow: 0 18px 45px rgba(15, 23, 42, 0.28);
-    transition: box-shadow 0.2s ease;
-    display: flex;
-    flex-direction: column;
-  }
+    
+    @media screen and (max-width: 1024px) {
+      border-radius: 20px;
+      margin-top: 4rem; /* Makes room for the fixed hamburger menu */
+    }
 
-  main:hover {
-    box-shadow: 0 22px 55px rgba(15, 23, 42, 0.35);
+    @media screen and (max-width: 768px) {
+       margin-top: 5rem;
+       padding-bottom: 2rem;
+    }
+
+    /* Custom Scrollbar for the main content area */
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: #F56692;
+      border-radius: 10px;
+    }
   }
 `;
 

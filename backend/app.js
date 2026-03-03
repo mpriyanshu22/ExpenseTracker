@@ -31,15 +31,24 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // CORS configuration - Allow credentials for cookies
-app.use(
-  cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-    credentials: true, // Allow cookies to be sent
+// app.use(
+//   cors({
+//     origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+//     credentials: true, // Allow cookies to be sent
+//     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+//     allowedHeaders: ['Content-Type', 'Authorization'],
+//   })
+// );
+app.use(cors({
+    // Allow BOTH your local machine and your deployed site
+    origin: [
+        'http://localhost:3000', 
+        'https://expensetracker-olq4.onrender.com'
+    ],
+    credentials: true, // Required for cookies
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
-  })
-);
-
+}));
 // Routes
 // app.js
 readdirSync('./routes').map((route) => {

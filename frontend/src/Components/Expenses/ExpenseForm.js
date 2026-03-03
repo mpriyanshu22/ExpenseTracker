@@ -89,7 +89,7 @@ function ExpenseForm() {
                     icon={plus}
                     bPad={'.8rem 1.6rem'}
                     bRad={'30px'}
-                    bg={'var(--color-accent'}
+                    bg={'var(--color-accent)'}
                     color={'#fff'}
                 />
             </div>
@@ -102,14 +102,20 @@ const ExpenseFormStyled = styled.form`
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    input, textarea, select{
+
+    /* Mobile adjustments for vertical spacing */
+    @media screen and (max-width: 600px) {
+        gap: 1rem;
+    }
+
+    input, textarea, select, .react-datepicker-wrapper {
         font-family: inherit;
         font-size: inherit;
         outline: none;
         border: none;
         padding: .5rem 1rem;
-        border-radius: 5px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px; /* Smoother rounded corners */
+        border: 2px solid #FFFFFF;
         background: rgba(252, 246, 249, 0.78);
         backdrop-filter: blur(10px);
         resize: none;
@@ -117,42 +123,72 @@ const ExpenseFormStyled = styled.form`
         color: rgba(34, 34, 96, 0.9);
         width: 100%;
         transition: all 0.2s ease;
-        &:hover {
-            border-color: rgba(255, 255, 255, 0.4);
-        }
+
         &:focus {
             border-color: var(--color-accent);
-            box-shadow: 0 0 0 2px rgba(245, 102, 146, 0.2);
+            background: #fff;
         }
-        &::placeholder{
+
+        &::placeholder {
             color: rgba(34, 34, 96, 0.4);
-        }
-    }
-    .input-control{
-        width: 100%;
-        input{
-            width: 100%;
         }
     }
 
-    .selects{
+    /* DatePicker Specific Fix */
+    .react-datepicker-wrapper {
+        padding: 0;
+        input {
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            padding: .5rem 1rem;
+        }
+    }
+
+    .input-control {
+        width: 100%;
+    }
+
+    .selects {
         display: flex;
-        justify-content: flex-end;
-        select{
+        select {
             color: rgba(34, 34, 96, 0.4);
-            &:focus, &:active{
+            &:focus, &:active {
                 color: rgba(34, 34, 96, 1);
             }
         }
     }
 
-    .submit-btn{
-        button{
-            box-shadow: 0px 1px 15px rgba(0, 0, 0, 0.06);
-            &:hover{
+    .submit-btn {
+        display: flex;
+        justify-content: flex-start;
+
+        @media screen and (max-width: 600px) {
+            justify-content: center; /* Center button on mobile */
+            button {
+                width: 100%; /* Full width button for easier tapping */
+            }
+        }
+
+        button {
+            transition: all 0.4s ease-in-out;
+            &:hover {
                 background: var(--color-green) !important;
             }
         }
+    }
+
+    .error {
+        color: #FF0000;
+        animation: shake 0.5s ease-in-out;
+        font-size: 0.9rem;
+    }
+
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(10px); }
+        50% { transform: translateX(-10px); }
+        75% { transform: translateX(10px); }
     }
 `;
 export default ExpenseForm

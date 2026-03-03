@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
-const BASE_URL = process.env.REACT_APP_API_URL;
+const BASE_URL = process.env.REACT_APP_API_URL||'http://localhost:5000/api/v1/';
 
 
 axios.defaults.withCredentials = true;
@@ -21,12 +21,12 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuth = async () => {
     try {
-      // Try to verify token by making a protected request
-      // This will work if cookie is present
-      const response = await axios.get(`${BASE_URL}auth/me`);
+      const response = await axios.get(`${BASE_URL}auth/me`, {
+        withCredentials: true, // Ensure cookies are sent for the verification check
+      });
       if (response.data.success) {
         setUser(response.data.data);
-        setToken('authenticated'); // Just a flag, actual token is in cookie
+        setToken('authenticated');
       }
     } catch (error) {
       // Not authenticated - this is expected if user hasn't logged in

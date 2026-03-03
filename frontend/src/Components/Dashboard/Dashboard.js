@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import { useGlobalContext } from '../../context/globalContext';
 import History from '../../History/History';
 import { InnerLayout } from '../../styles/Layouts';
-import { rupee } from '../../utils/Icons';
 import Chart from '../Chart/Chart';
 
 function Dashboard() {
@@ -16,6 +15,9 @@ function Dashboard() {
 
     const balance = totalBalance();
     const isNegative = balance < 0;
+    
+    // Using a string symbol to prevent [object Object] errors in templates
+    const rupeeSymbol = "₹";
 
     return (
         <DashboardStyled>
@@ -26,19 +28,19 @@ function Dashboard() {
                     <div className="balance-card">
                         <h2>Total Balance</h2>
                         <p className={isNegative ? 'negative' : 'positive'}>
-                            {rupee} {Math.abs(balance).toLocaleString('en-IN')}
+                            {rupeeSymbol} {Math.abs(balance).toLocaleString('en-IN')}
                         </p>
                     </div>
                     <div className="income-card">
                         <h2>Total Income</h2>
                         <p className="income-amount">
-                            {rupee} {totalIncome().toLocaleString('en-IN')}
+                            {rupeeSymbol} {totalIncome().toLocaleString('en-IN')}
                         </p>
                     </div>
                     <div className="expense-card">
                         <h2>Total Expense</h2>
                         <p className="expense-amount">
-                            {rupee} {totalExpenses().toLocaleString('en-IN')}
+                            {rupeeSymbol} {totalExpenses().toLocaleString('en-IN')}
                         </p>
                     </div>
                 </div>
@@ -60,14 +62,32 @@ function Dashboard() {
 }
 
 const DashboardStyled = styled.div`
+    h1 {
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+        
+        @media screen and (max-width: 600px) {
+            font-size: 1.5rem;
+            text-align: center;
+        }
+    }
+
     .balance-summary {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         gap: 1.5rem;
         margin-bottom: 2rem;
 
-        @media (max-width: 1024px) {
+        /* Tablet View */
+        @media screen and (max-width: 1024px) {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        /* Mobile View */
+        @media screen and (max-width: 600px) {
             grid-template-columns: 1fr;
+            margin-bottom: 1.5rem;
         }
     }
 
@@ -78,16 +98,33 @@ const DashboardStyled = styled.div`
         border-radius: 20px;
         padding: 1.5rem;
         box-shadow: 0px 1px 15px rgba(0, 0, 0, 0.06);
+        text-align: center;
+
+        @media screen and (max-width: 600px) {
+            padding: 1rem;
+            border-radius: 15px;
+        }
 
         h2 {
-            font-size: 1rem;
+            font-size: 0.9rem;
             margin-bottom: 0.5rem;
             color: rgba(34, 34, 96, 0.8);
+
+            @media screen and (max-width: 600px) {
+                font-size: 0.8rem;
+            }
         }
 
         p {
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: 700;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+
+            @media screen and (max-width: 768px) {
+                font-size: 1.8rem;
+            }
         }
 
         .positive, .income-amount { color: #42AD00; }
@@ -105,7 +142,7 @@ const DashboardStyled = styled.div`
 
         .chart-container {
             width: 100%;
-            /* Removed background here to let the Chart component handle it */
+            /* Container helps Chart component maintain its own responsive boundaries */
         }
     }
 
@@ -117,4 +154,4 @@ const DashboardStyled = styled.div`
     }
 `;
 
-export default Dashboard
+export default Dashboard;

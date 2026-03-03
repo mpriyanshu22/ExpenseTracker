@@ -9,51 +9,72 @@ function Navigation({ active, setActive, onSignOut, user }) {
 
   const handleNavClick = (id) => {
     setActive(id);
-    setOpen(false);
+    setOpen(false); // Auto-close menu on mobile after selection
   };
 
   return (
-    <NavStyled open={open}>
-      <div className="nav-inner">
-        <div className="user-con">
-          <img src={avatar} alt="" />
-          <div className="text">
-            <h2>{user?.name || 'User'}</h2>
-            <p>Your Money</p>
+    <>
+      {/* Overlay for mobile to close menu when clicking outside */}
+      {open && <NavOverlay onClick={() => setOpen(false)} />}
+      
+      <NavStyled open={open}>
+        <div className="nav-inner">
+          <div className="user-con">
+            <img src={avatar} alt="User Avatar" />
+            <div className="text">
+              <h2>{user?.name || 'User'}</h2>
+              <p>Your Money</p>
+            </div>
+            {/* Hamburger button visible only on mobile/tablet */}
+            <button
+              className="hamburger"
+              onClick={() => setOpen((prev) => !prev)}
+              aria-label="Toggle navigation"
+            >
+              <div className={`line ${open ? 'open' : ''}`} />
+              <div className={`line ${open ? 'open' : ''}`} />
+              <div className={`line ${open ? 'open' : ''}`} />
+            </button>
           </div>
-          <button
-            className="hamburger"
-            onClick={() => setOpen((prev) => !prev)}
-            aria-label="Toggle navigation"
-          >
-            <span />
-            <span />
-            <span />
-          </button>
+
+          <ul className="menu-items">
+            {menuItems.map((item) => {
+              return (
+                <li
+                  key={item.id}
+                  onClick={() => handleNavClick(item.id)}
+                  className={active === item.id ? 'active' : ''}
+                >
+                  {item.icon}
+                  <span>{item.title}</span>
+                </li>
+              );
+            })}
+          </ul>
+
+          <div className="bottom-nav">
+            <button type="button" onClick={onSignOut}>
+              {signout} <span>Sign Out</span>
+            </button>
+          </div>
         </div>
-        <ul className={`menu-items ${open ? 'open' : ''}`}>
-          {menuItems.map((item) => {
-            return (
-              <li
-                key={item.id}
-                onClick={() => handleNavClick(item.id)}
-                className={active === item.id ? 'active' : ''}
-              >
-                {item.icon}
-                <span>{item.title}</span>
-              </li>
-            );
-          })}
-        </ul>
-        <div className="bottom-nav">
-          <button type="button" onClick={onSignOut}>
-            {signout} <span>Sign Out</span>
-          </button>
-        </div>
-      </div>
-    </NavStyled>
+      </NavStyled>
+    </>
   );
 }
+
+const NavOverlay = styled.div`
+  @media (max-width: 1024px) {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(2px);
+    z-index: 99;
+  }
+`;
 
 const NavStyled = styled.nav`
   padding: 1.8rem 1.5rem;
@@ -61,7 +82,7 @@ const NavStyled = styled.nav`
   min-width: 300px;
   height: 100%;
   background: rgba(252, 246, 249, 0.78);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 2px solid #FFFFFF;
   backdrop-filter: blur(10px);
   border-radius: 32px;
   display: flex;
@@ -69,7 +90,7 @@ const NavStyled = styled.nav`
   justify-content: space-between;
   gap: 1.5rem;
   box-shadow: 0 18px 45px rgba(15, 23, 42, 0.28);
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   flex-shrink: 0;
 
   .nav-inner {
@@ -78,19 +99,14 @@ const NavStyled = styled.nav`
     height: 100%;
   }
 
-  &:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 22px 55px rgba(15, 23, 42, 0.35);
-  }
-
   .user-con {
     display: flex;
     align-items: center;
     gap: 1rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: 2rem;
     img {
-      width: 64px;
-      height: 64px;
+      width: 60px;
+      height: 60px;
       border-radius: 50%;
       object-fit: cover;
       background: #fcf6f9;
@@ -98,37 +114,23 @@ const NavStyled = styled.nav`
       padding: 0.15rem;
       box-shadow: 0px 1px 17px rgba(0, 0, 0, 0.08);
     }
-    h2 {
-      color: rgba(34, 34, 96, 1);
-      font-size: 1.2rem;
-    }
-    p {
-      color: rgba(34, 34, 96, 0.6);
-      font-size: 0.9rem;
-    }
+    h2 { color: rgba(34, 34, 96, 1); font-size: 1.1rem; }
+    p { color: rgba(34, 34, 96, 0.6); font-size: 0.8rem; }
   }
 
   .hamburger {
-    margin-left: auto;
-    width: 38px;
-    height: 32px;
-    border-radius: 999px;
-    border: none;
-    background: rgba(255, 255, 255, 0.9);
     display: none;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
+    gap: 5px;
+    border: none;
+    background: none;
     cursor: pointer;
-    box-shadow: 0 6px 14px rgba(15, 23, 42, 0.2);
-    padding: 0;
-    span {
-      width: 18px;
-      height: 2px;
-      border-radius: 999px;
+    .line {
+      width: 25px;
+      height: 3px;
       background: #222260;
-      transition: background 0.2s ease;
+      border-radius: 10px;
+      transition: all 0.3s ease;
     }
   }
 
@@ -136,99 +138,78 @@ const NavStyled = styled.nav`
     flex: 1;
     display: flex;
     flex-direction: column;
-    margin-top: 1rem;
     li {
       display: grid;
-      grid-template-columns: 32px auto;
+      grid-template-columns: 40px auto;
       align-items: center;
-      margin: 0.4rem 0;
+      margin: 0.5rem 0;
       font-weight: 500;
       cursor: pointer;
-      transition: all 0.25s ease-in-out;
       color: rgba(34, 34, 96, 0.6);
-      padding: 0.45rem 0.9rem;
-      border-radius: 999px;
-      position: relative;
-      i {
-        color: rgba(34, 34, 96, 0.6);
-        font-size: 1.2rem;
-        transition: all 0.25s ease-in-out;
-      }
+      padding: 0.6rem 1rem;
+      border-radius: 15px;
+      transition: all 0.3s ease;
+      
+      i { font-size: 1.3rem; }
+      
       &:hover {
-        background: rgba(255, 255, 255, 0.9);
-        color: rgba(34, 34, 96, 0.9);
-        transform: translateX(2px);
+        background: rgba(255, 255, 255, 0.6);
+        color: rgba(34, 34, 96, 1);
       }
     }
-  }
-
-  .active {
-    color: rgba(34, 34, 96, 1) !important;
-    background: rgba(255, 255, 255, 1);
-    box-shadow: 0 10px 18px rgba(15, 23, 42, 0.18);
-    i {
+    .active {
       color: rgba(34, 34, 96, 1) !important;
+      background: #FFFFFF !important;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
     }
   }
 
   .bottom-nav {
-    margin-top: 1.5rem;
     button {
       width: 100%;
       display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 0.4rem;
-      padding: 0.65rem 1rem;
-      border-radius: 999px;
+      gap: 0.8rem;
+      padding: 0.8rem 1.2rem;
+      border-radius: 15px;
       border: none;
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.5);
       cursor: pointer;
-      color: rgba(34, 34, 96, 0.8);
       font-weight: 600;
-      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.18);
-      transition: all 0.2s ease;
-      span {
-        font-size: 0.95rem;
-      }
+      color: rgba(34, 34, 96, 0.6);
+      transition: all 0.3s ease;
+      
       &:hover {
-        background: rgba(245, 102, 146, 0.95);
+        background: #f56692;
         color: #fff;
-        transform: translateY(-1px);
-        box-shadow: 0 12px 26px rgba(245, 102, 146, 0.45);
       }
     }
   }
 
-  @media (max-width: 1024px) {
+  /* Mobile/Tablet Breakpoint */
+  @media screen and (max-width: 1024px) {
     position: fixed;
+    top: 0;
+    left: 0;
     z-index: 100;
-    top: 1rem;
-    left: 1rem;
-    width: 280px;
-    max-width: calc(100vw - 2rem);
-    transform: ${props => props.open ? 'translateX(0)' : 'translateX(calc(-100% - 1rem))'};
-    transition: transform 0.3s ease;
+    height: 100vh;
+    border-radius: 0 32px 32px 0;
+    transform: ${props => props.open ? 'translateX(0)' : 'translateX(-100%)'};
     
     .hamburger {
       display: flex;
-    }
-    
-    .menu-items {
-      display: ${props => props.open ? 'flex' : 'none'};
+      position: absolute;
+      right: -60px; /* Moves hamburger outside the drawer when closed */
+      top: 25px;
+      background: #fff;
+      padding: 10px;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     }
   }
 
-  @media (max-width: 768px) {
-    width: calc(100vw - 2rem);
-    max-width: calc(100vw - 2rem);
-    border-radius: 24px;
-    .nav-inner {
-      height: auto;
-    }
-    .bottom-nav {
-      margin-top: 0.5rem;
-    }
+  @media screen and (max-width: 400px) {
+    width: 85%; /* Slightly smaller for very small phones */
   }
 `;
 

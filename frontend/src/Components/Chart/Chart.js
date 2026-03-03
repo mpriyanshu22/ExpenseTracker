@@ -54,32 +54,79 @@ function Chart() {
         ]
     }
 
-    // Options to control responsiveness and prevent overflow
     const options = {
         responsive: true,
-        maintainAspectRatio: false, // Allows the chart to fill the container height
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'top',
+                labels: {
+                    boxWidth: 10, // Smaller boxes for mobile
+                    font: {
+                        size: window.innerWidth < 600 ? 10 : 12 // Dynamic font size
+                    }
+                }
+            },
+            tooltip: {
+                padding: 10,
+                bodyFont: {
+                    size: 12
+                }
+            }
+        },
         scales: {
             y: {
                 beginAtZero: true,
+                ticks: {
+                    font: {
+                        size: window.innerWidth < 600 ? 8 : 10
+                    },
+                    // Shorten large numbers (e.g., 10k instead of 10000)
+                    callback: function(value) {
+                        if (value >= 1000) return value / 1000 + 'k';
+                        return value;
+                    }
+                }
+            },
+            x: {
+                ticks: {
+                    font: {
+                        size: window.innerWidth < 600 ? 8 : 10
+                    }
+                }
             }
         }
     }
 
     return (
         <ChartStyled>
-            <Line data={data} options={options} />
+            <div className="chart-container">
+                <Line data={data} options={options} />
+            </div>
         </ChartStyled>
     )
 }
 
 const ChartStyled = styled.div`
     background: #FFFFFF;
-    border: 1px solid #FFFFFF;
+    border: 2px solid #FFFFFF;
     box-shadow: 0px 1px 15px rgba(0, 0, 0, 0.06);
     padding: 1rem;
     border-radius: 20px;
-    height: 400px; /* Fixed height prevents vertical overflow */
-    width: 100%;   /* Ensures it stays within parent */
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .chart-container {
+        height: 300px; /* Reduced height for mobile-first friendliness */
+        width: 100%;
+
+        @media screen and (min-width: 768px) {
+            height: 400px; /* Taller on desktop */
+        }
+    }
 `;
 
 export default Chart

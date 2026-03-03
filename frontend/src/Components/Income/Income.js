@@ -4,19 +4,24 @@ import { useGlobalContext } from '../../context/globalContext';
 import { InnerLayout } from '../../styles/Layouts';
 import Form from '../Form/Form';
 import IncomeItem from '../IncomeItem/IncomeItem';
-import { rupee } from '../../utils/Icons';
 
 function Income() {
-    const {addIncome,incomes, getIncomes, deleteIncome, totalIncome} = useGlobalContext()
+    const {incomes, getIncomes, deleteIncome, totalIncome} = useGlobalContext()
 
     useEffect(() =>{
         getIncomes()
     }, [])
+
+    // Standard string symbol to prevent [object Object] errors
+    const rupeeSymbol = "₹";
+
     return (
         <IncomeStyled>
             <InnerLayout>
                 <h1>Incomes</h1>
-                <h2 className="total-income">Total Income: <span>{rupee} {totalIncome().toLocaleString('en-IN')}</span></h2>
+                <h2 className="total-income">
+                    Total Income: <span>{rupeeSymbol} {totalIncome().toLocaleString('en-IN')}</span>
+                </h2>
                 <div className="income-content">
                     <div className="form-container">
                         <Form />
@@ -47,38 +52,58 @@ function Income() {
 const IncomeStyled = styled.div`
     display: flex;
     overflow: auto;
-    .total-income{
+
+    h1 {
+        @media screen and (max-width: 600px) {
+            font-size: 1.5rem;
+            text-align: center;
+        }
+    }
+
+    .total-income {
         display: flex;
         justify-content: center;
         align-items: center;
         background: rgba(252, 246, 249, 0.78);
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        border: 2px solid #FFFFFF;
         backdrop-filter: blur(10px);
         box-shadow: 0px 1px 15px rgba(0, 0, 0, 0.06);
         border-radius: 20px;
         padding: 1rem;
         margin: 1rem 0;
-        font-size: 2rem;
+        font-size: 1.8rem;
         gap: .5rem;
         transition: all 0.2s ease;
+
+        @media screen and (max-width: 600px) {
+            font-size: 1.2rem;
+            flex-direction: column; /* Stacks label and value on small phones */
+            padding: 0.8rem;
+        }
 
         &:hover {
             transform: translateY(-2px);
             box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
         }
 
-        span{
-            font-size: 2.5rem;
+        span {
+            font-size: 2.2rem;
             font-weight: 800;
             color: #42AD00;
+
+            @media screen and (max-width: 600px) {
+                font-size: 1.8rem;
+            }
         }
     }
-    .income-content{
+
+    .income-content {
         display: flex;
         gap: 2rem;
 
         @media (max-width: 1024px) {
             flex-direction: column;
+            gap: 1.5rem;
         }
 
         .form-container {
@@ -90,10 +115,13 @@ const IncomeStyled = styled.div`
             }
         }
 
-        .incomes{
+        .incomes {
             flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
         }
     }
 `;
 
-export default Income
+export default Income;
