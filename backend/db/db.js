@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const db = async () => {
     try {
-        console.log("MONGO_URL:", process.env.MONGO_URL);
+       
         mongoose.set('strictQuery', false);
         
         // Validate MONGO_URL

@@ -15,18 +15,13 @@ const generateToken = (userId) => {
 const sendTokenResponse = (user, statusCode, res) => {
   const token = generateToken(user._id);
 
-  // Fallback check: if NODE_ENV isn't set, assume development
-  const isProduction = process.env.NODE_ENV === 'production';
-
   const cookieOptions = {
     expires: new Date(
       Date.now() + (process.env.JWT_COOKIE_EXPIRE || 7) * 24 * 60 * 60 * 1000
     ),
-    httpOnly: true, 
-    // CRITICAL: Changed from 'strict' to 'lax' for cross-port (3000 to 5000)
-    sameSite: isProduction ? 'strict' : 'lax', 
-    // CRITICAL: Must be false for http://localhost
-    secure: isProduction, 
+    httpOnly: true,
+    secure: true,       // 🔥 REQUIRED for HTTPS (Render)
+    sameSite: 'none',   // 🔥 REQUIRED for cross-origin
   };
 
   res.cookie('token', token, cookieOptions);
@@ -42,7 +37,6 @@ const sendTokenResponse = (user, statusCode, res) => {
     },
   });
 };
-
 // @desc    Register a new user
 // @route   POST /api/v1/auth/register
 // @access  Public
@@ -203,12 +197,18 @@ exports.getMe = async (req, res) => {
 exports.logout = async (req, res) => {
   const isProduction = process.env.NODE_ENV === 'production';
   
-  res.cookie('token', 'none', {
-    expires: new Date(Date.now() + 10 * 1000), // Expires in 10 seconds
-    httpOnly: true,
-    secure: isProduction,
-    sameSite: isProduction ? 'strict' : 'lax', // Match login/register settings
-  });
+  // res.cookie('token', 'none', {
+  //   expires: new Date(Date.now() + 10 * 1000), // Expires in 10 seconds
+  //   httpOnly: true,
+  //   secure: isProduction,
+  //   sameSite: isProduction ? 'strict' : 'lax', // Match login/register settings
+  // });
+res.cookie('token', 'none', {
+  expires: new Date(Date.now() + 10 * 1000),
+  httpOnly: true,
+  secure: true,
+  sameSite: 'none',
+});
 
   res.status(200).json({
     success: true,
