@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:5000/api/v1/';
+const BASE_URL = 'https://expensetracker-backend-0nrd.onrender.com/api/v1/';
 
 // Configure axios to send credentials (cookies) with all requests
 axios.defaults.withCredentials = true;
